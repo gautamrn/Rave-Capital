@@ -1,0 +1,39 @@
+// backend/prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model User {
+  id           Int          @id @default(autoincrement())
+  email        String       @unique
+  passwordHash String
+  simulations  Simulation[]
+}
+
+model Simulation {
+  id                 Int      @id @default(autoincrement())
+  userId             Int
+  user               User     @relation(fields: [userId], references: [id])
+  title              String
+  venueCapacity      Int
+  expectedAttendance Int
+  ticketPrice        Float
+  artistFee          Float
+  gearCost           Float
+  marketingBudget    Float
+  barSplitPercent    Float
+  totalBarSales      Float
+  grossRevenue       Float
+  barRevenue         Float
+  totalCost          Float
+  netProfit          Float
+  breakEven          Int
+  createdAt          DateTime @default(now())
+}
