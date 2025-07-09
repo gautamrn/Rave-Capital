@@ -1,9 +1,10 @@
 import { Router } from "express";
+import { authenticate } from '../middleware/auth';
+import { createSimulation, listSimulations } from '../controllers/simulationController';
 
 const router = Router();
 
-router.get('/', (req, res) => {
-    res.send('Simulation route works');
-});
+router.post('/', authenticate, createSimulation);
+router.get('/', authenticate, listSimulations);
 
 export default router;
