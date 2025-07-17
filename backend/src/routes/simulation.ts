@@ -1,10 +1,16 @@
-import { Router } from "express";
-import { authenticate } from '../middleware/auth';
-import { createSimulation, listSimulations } from '../controllers/simulationController';
+import { Router, Request, Response } from "express";
 
 const router = Router();
 
-router.post('/', authenticate, createSimulation);
-router.get('/', authenticate, listSimulations);
+router.post("/calculate", (req: Request, res: Response) => {
+  const { venueName, capacity, rent, ticketPrice } = req.body;
+
+  if (!capacity || !rent || !ticketPrice) {
+    return res.status(400).json({ error: "Missing fields" });
+  }
+
+  const profit = capacity * ticketPrice - rent;
+  res.json({ venueName, profit });
+});
 
 export default router;

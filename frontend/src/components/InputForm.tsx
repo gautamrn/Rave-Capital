@@ -5,18 +5,41 @@ export default function InputForm() {
   const [capacity, setCapacity] = useState('');
   const [rent, setRent] = useState('');
   const [ticketPrice, setTicketPrice] = useState('');
+  const [result, setResult] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+
+  const handleSubmit = async(e: React.FormEvent) => {
     e.preventDefault();
-    const capacityNum = parseInt(capacity);
-    const rentNum = parseFloat(rent);
-    const priceNum = parseFloat(ticketPrice);
-    const profit = capacityNum * priceNum - rentNum;
-    alert(`Estimated Profit: $${profit}`);
+
+    const payload = {
+      venueName, 
+      capacity: Number(capacity),
+      rent: Number(rent),
+      ticketPrice: Number(ticketPrice),
+    };
+
+    try{
+      const res = await fetch("http://localhost:3000/api/calculate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if(!res.ok) throw new Error("Failed to calculate");
+
+      const data = await res.json();
+      setResult(`Profit for ${data.venueName}: $${data.profit}`);
+    } catch(err){
+      setResult("Error calculating profit");
+    }
   };
 
   return (
     <form onSubmit={handleSubmit}>
+      {result && <p style={{ marginTop: "1rem" }}>{result}</p>}
+
       <h2>Venue ROI Simulator</h2>
 
       <label>
